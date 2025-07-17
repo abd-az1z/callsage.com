@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 import {
   Form,
   FormControl,
@@ -20,8 +21,8 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -30,6 +31,7 @@ const formSchema = z.object({
 
 export const SignInView = () => {
   const router = useRouter();
+
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -41,6 +43,7 @@ export const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
@@ -61,6 +64,26 @@ export const SignInView = () => {
       password: "",
     },
   });
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -109,7 +132,7 @@ export const SignInView = () => {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="**********"
+                            placeholder="********"
                             {...field}
                           />
                         </FormControl>
@@ -139,7 +162,9 @@ export const SignInView = () => {
                     type="button"
                     className="w-full"
                     variant="outline"
+                    onClick={() => onSocial("google")}
                   >
+                    <FaGoogle />
                     Google
                   </Button>
                   <Button
@@ -147,7 +172,9 @@ export const SignInView = () => {
                     type="button"
                     className="w-full"
                     variant="outline"
+                    onClick={() => onSocial("github")}
                   >
+                    <FaGithub />
                     Github
                   </Button>
                 </div>
