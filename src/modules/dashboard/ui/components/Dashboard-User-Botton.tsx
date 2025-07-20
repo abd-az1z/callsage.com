@@ -42,7 +42,7 @@ export const DashboardUserBotton = () => {
   if (isMobile) {
     return (
       <Drawer>
-        <DropdownMenuTrigger className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
+        <Button className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
           {data.user.image ? (
             <Avatar>
               <AvatarImage src={data.user.image} />
@@ -59,7 +59,7 @@ export const DashboardUserBotton = () => {
             <p className="text-xs truncate w-full">{data.user.email}</p>
           </div>
           <ChevronDownIcon className="size-4 shrink-0" />
-        </DropdownMenuTrigger>
+        </Button>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>{data.user.name}</DrawerTitle>
