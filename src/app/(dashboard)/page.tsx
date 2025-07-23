@@ -4,11 +4,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 const page = async () => {
-  const sessions = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!sessions) {
+  if (!session) {
     redirect("/sign-in");
   }
 
