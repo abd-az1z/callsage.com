@@ -11,23 +11,31 @@ import AgentsListHeader from "@/modules/agents/ui/components/AgentsListHeader";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { SearchParams } from "nuqs";
+import { loadSeachParams } from "@/modules/agents/params";
 
-const Agents = async () => {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-  
-    if (!session) {
-      redirect("/sign-in");
-    }
-  
+interface Props {
+  searchParams: Promise<SearchParams>;
+}
+
+const Agents = async ({searchParams}:Props) => {
+  const filters  = await loadSeachParams(searchParams)
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
+  void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({
+    ...filters,
+  }));
 
   return (
     <>
-    <AgentsListHeader />
+      <AgentsListHeader />
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<AgentsViewLoading />}>
           <ErrorBoundary fallback={<AgentsViewError />}>
