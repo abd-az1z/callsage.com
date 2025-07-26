@@ -1,12 +1,27 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, XCircleIcon } from "lucide-react";
 import { NewAgentDailog } from "./newAgentDailog";
 import { useState } from "react";
+import { useAgentsFilters } from "../../hooks/useAgentsFilters";
+import { AgentSearchFilter } from "./AgentSeachFilter";
+import { DEFAULT_PAGE } from "@/constants";
 
 const AgentsListHeader = () => {
+
+  
+  const [filters, setFilters] = useAgentsFilters();
   const [isDailogOpen, setIsDailogOpen] = useState(false);
+
+  const isAnyFilterModified = !!filters.search;
+  const onClearFilters = () => {
+    setFilters({
+      search: "",
+      page: DEFAULT_PAGE,
+    });
+  };
+
   return (
     <>
       <NewAgentDailog open={isDailogOpen} onOpenChange={setIsDailogOpen} />
@@ -17,6 +32,14 @@ const AgentsListHeader = () => {
             <PlusIcon />
             New Agent
           </Button>
+        </div>
+        <div className="flex items-center gap-x-2 ">
+          <AgentSearchFilter />
+          {isAnyFilterModified && (
+            <Button variant="outline" onClick={onClearFilters} size="sm">
+              <XCircleIcon /> Clear
+            </Button>
+          )}
         </div>
       </div>
     </>
