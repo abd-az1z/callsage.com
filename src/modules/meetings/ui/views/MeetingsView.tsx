@@ -2,14 +2,28 @@
 
 import { ErrorState } from "@/components/errorState";
 import { LoadingState } from "@/components/loadingState";
+import { DataTable } from "@/components/data-table";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { columns } from "../components/columns";
+import { EmptyState } from "@/components/emptyState";
 
 export const MeetingsView = () => {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.meetings.getMany.queryOptions({}));
 
-  return <div>{JSON.stringify(data)}</div>;
+  return (
+    <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4 ">
+      <DataTable columns={columns} data={data.items} />
+      {data.items.length === 0 && (
+              <EmptyState
+                title="Start Your First Meeting"
+description="Schedule a meeting with your AI agents to collaborate, share ideas, and engage with participants in real time."
+
+              />
+            )}
+    </div>
+  );
 };
 
 export const MeetingsViewLoading = () => {
