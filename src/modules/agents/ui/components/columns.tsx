@@ -1,21 +1,12 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-// Use inline type to match DataTable data
-type AgentRow = {
-  name: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  instructions: string;
-  meetingCount: number;
-};
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { CornerDownRight, VideoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { AgentsGetMany } from "../../types";
 
-export const columns: ColumnDef<AgentRow>[] = [
+export const columns: ColumnDef<AgentsGetMany[number]>[] = [
   {
     accessorKey: "name",
     header: "Agent Name",
@@ -42,7 +33,10 @@ export const columns: ColumnDef<AgentRow>[] = [
     accessorKey: "meetingCount",
     header: "Meetings",
     cell: ({ row }) => (
-      <Badge variant="outline" className="flex items-center gap-x-2 [&>svg]:size-4 ">
+      <Badge
+        variant="outline"
+        className="flex items-center gap-x-2 [&>svg]:size-4 "
+      >
         <VideoIcon className="text-blue-700  " />
         {row.original.meetingCount}{" "}
         {row.original.meetingCount === 1 ? "meeting" : "meetings"}

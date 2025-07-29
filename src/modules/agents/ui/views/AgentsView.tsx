@@ -2,7 +2,6 @@
 
 import { ErrorState } from "@/components/errorState";
 import { LoadingState } from "@/components/loadingState";
-import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -10,6 +9,7 @@ import { EmptyState } from "@/components/emptyState";
 import { useAgentsFilters } from "../../hooks/useAgentsFilters";
 import { DataPagination } from "../components/DataPagination";
 import { useRouter } from "next/navigation";
+import { DataTable } from "@/components/data-table";
 
 export const AgentsView = () => {
   const [filters, setFilters] = useAgentsFilters();
