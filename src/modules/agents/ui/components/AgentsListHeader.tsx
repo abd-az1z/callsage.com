@@ -2,15 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { PlusIcon, XCircleIcon } from "lucide-react";
-import { NewAgentDailog } from "./newAgentDailog";
+import { NewAgentDailog } from "./NewAgentDailog";
 import { useState } from "react";
 import { useAgentsFilters } from "../../hooks/useAgentsFilters";
 import { AgentSearchFilter } from "./AgentSeachFilter";
 import { DEFAULT_PAGE } from "@/constants";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const AgentsListHeader = () => {
-
-  
   const [filters, setFilters] = useAgentsFilters();
   const [isDailogOpen, setIsDailogOpen] = useState(false);
 
@@ -33,14 +32,17 @@ const AgentsListHeader = () => {
             New Agent
           </Button>
         </div>
-        <div className="flex items-center gap-x-2 ">
-          <AgentSearchFilter />
-          {isAnyFilterModified && (
-            <Button variant="outline" onClick={onClearFilters} size="sm">
-              <XCircleIcon /> Clear
-            </Button>
-          )}
-        </div>
+        <ScrollArea>
+          <div className="flex items-center gap-x-2 ">
+            <AgentSearchFilter />
+            {isAnyFilterModified && (
+              <Button variant="outline" onClick={onClearFilters} size="sm">
+                <XCircleIcon /> Clear
+              </Button>
+            )}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     </>
   );
