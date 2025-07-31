@@ -10,10 +10,13 @@ import {
 } from "@tanstack/react-query";
 import { MeetingIdViewHeader } from "../components/MeetingIdViewHeader";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { UpdateMeetingDailog } from "../components/UpdateMeetingDailog copy";
 import { useState } from "react";
+import { ActiveState } from "@/components/ActiveState";
+import { CancelState } from "@/components/CancelState";
+import { AfterMeetingProcessingState } from "@/components/AfterMeetingProcessingState";
+import { UpComingState } from "@/components/UpComingState";
 
 interface Props {
   meetingId: string;
@@ -43,9 +46,6 @@ export const MeetingIdView = ({ meetingId }: Props) => {
         // free tier usage
         router.push("/meetings");
       },
-      //   onError: (error) => {
-      //     toast.error(error.message);
-      //   },
     })
   );
 
@@ -54,6 +54,12 @@ export const MeetingIdView = ({ meetingId }: Props) => {
     if (!ok) return;
     await removeMeeting.mutateAsync({ id: meetingId });
   };
+
+  const isActive = data.status === "active";
+  const isUpcoming = data.status === "upcoming";
+  const isCompleted = data.status === "completed";
+  const isCancelled = data.status === "cancelled";
+  const isProcessing = data.status === "processing";
 
   return (
     <>
@@ -70,35 +76,18 @@ export const MeetingIdView = ({ meetingId }: Props) => {
           onEdit={() => setUpdateMeetingDailogOpen(true)}
           onRemove={handleRemoveMeeting}
         />
+        {isCancelled && <CancelState />}
+        {isCompleted && <div>Completed</div>}
+        {isProcessing && <AfterMeetingProcessingState />}
+        {isActive && <ActiveState meetingId={meetingId} />}
 
-        {/* 
-        
-        <div className="bg-white border rounded-lg ">
-                  <div className="p-4 gap-y-5 flex flex-col col-span-5 ">
-                    <div className="flex items-center gap-x-3">
-                      <GeneratedAvatar
-                        variant="bottsNeutral"
-                        seed={data.name}
-                        className="size-9"
-                      />
-                      <h2 className="text-2xl font-medium">{data.name}</h2>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className="flex items-center gap-x-2 [&>svg]:size-4 "
-                    >
-                      <VideoIcon className="text-blue-700" />
-                      {data.meetingCount}{" "}
-                      {data.meetingCount === 1 ? "meeting" : "meetings"}
-                    </Badge>
-                    <div className="flex flex-col gap-y-4 ">
-                      <p className="text-lg font-medium">Instructions</p>
-                      <p className="text-netural-800">{data.instructions}</p>
-                    </div>
-                  </div>
-                </div>
-        
-        */}
+        {isUpcoming && (
+          <UpComingState
+            meetingId={meetingId}
+            onCancelMeeting={() => {}}
+            isCancelling={false}
+          />
+        )}
       </div>
     </>
   );
