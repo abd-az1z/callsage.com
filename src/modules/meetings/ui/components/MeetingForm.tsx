@@ -21,6 +21,7 @@ import { useState } from "react";
 import { CommandSelect } from "@/components/commandSelect";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { NewAgentDailog } from "@/modules/agents/ui/components/newAgentDailog";
+import { useRouter } from "next/navigation";
 
 interface MeetingFormProps {
   onSuccess?: (id?: string) => void;
@@ -35,7 +36,7 @@ export const MeetingForm = ({
 }: MeetingFormProps) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
+  const router = useRouter();
   const [agentSearch, setAgentSearch] = useState("");
   const [openNewAgentDailog, setOpenNewAgentDailog] = useState(false);
 
@@ -49,13 +50,17 @@ export const MeetingForm = ({
         await queryClient.invalidateQueries(
           trpc.meetings.getMany.queryOptions({})
         );
-        // invalidate free tear
+        await queryClient.invalidateQueries(
+          trpc.premium.getFreeUsage.queryOptions()
+        );
         onSuccess?.(data.id);
       },
 
       onError: (error) => {
         toast.error(error.message);
-        // error checking and redirect to admin or /upgrade
+        if (error.data?.code === "FORBIDDEN") {
+          router.push("/upgrade");
+        }
       },
     })
   );
@@ -79,7 +84,6 @@ export const MeetingForm = ({
 
       onError: (error) => {
         toast.error(error.message);
-        // error checking and redirect to admin or /upgrade
       },
     })
   );

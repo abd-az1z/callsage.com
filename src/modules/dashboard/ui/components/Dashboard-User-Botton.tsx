@@ -42,7 +42,7 @@ export const DashboardUserBotton = () => {
   if (isMobile) {
     return (
       <Drawer>
-        <Button className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
+        <Button className="rounded-lg  border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
           {data.user.image ? (
             <Avatar>
               <AvatarImage src={data.user.image} />
@@ -66,10 +66,13 @@ export const DashboardUserBotton = () => {
             <DrawerDescription>{data.user.email}</DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
-            <DropdownMenuItem className="">
+            <Button
+              onClick={() => authClient.customer.portal()}
+              variant="outline"
+            >
               Billing
               <CreditCardIcon className="size-4 text-black" />
-            </DropdownMenuItem>
+            </Button>
             <Button variant="outline" onClick={onLogout} className="w-full">
               <LogOutIcon className="size-4 text-black" />
               Logout
@@ -82,7 +85,7 @@ export const DashboardUserBotton = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
+      <DropdownMenuTrigger className="rounded-lg border gap-2 border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden ">
         {data.user.image ? (
           <Avatar>
             <AvatarImage src={data.user.image} />
@@ -110,7 +113,10 @@ export const DashboardUserBotton = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuLabel />
-        <DropdownMenuItem className="cursor-pointer flex items-center justify-between ">
+        <DropdownMenuItem
+          onClick={() => authClient.customer.portal()}
+          className="cursor-pointer flex items-center justify-between "
+        >
           Billing
           <CreditCardIcon className="size-4" />
         </DropdownMenuItem>
