@@ -35,10 +35,10 @@ export const CommandSelect = ({
   const [open, setOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
 
-  const handleOpenChange = (open: boolean)=>{
+  const handleOpenChange = (open: boolean) => {
     onSearch?.("");
     setOpen(open);
-  }
+  };
 
   return (
     <>
@@ -67,13 +67,13 @@ export const CommandSelect = ({
               No options found
             </span>
           </CommandEmpty>
-          {options.map((option) => (
+          {options.map((option, idx) => (
             <CommandItem
               onSelect={() => {
                 onSelect(option.value);
                 setOpen(false);
               }}
-              key={option.id}
+              key={option.id || option.value || idx}
             >
               {option.children}
             </CommandItem>
