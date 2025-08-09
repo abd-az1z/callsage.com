@@ -111,7 +111,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📬 Contact
 
 - **GitHub Issues**: [https://github.com/abd-az1z/callsage.com/issues](https://github.com/abd-az1z/callsage.com/issues)
-- **Email**: [your-email@example.com](mailto:your-email@example.com)
+- **Email**: [mohdabdulaziz2023@gmail.com](mailto:mohdabdulaziz2023@gmail.com)
 
 ## 🙏 Acknowledgments
 
