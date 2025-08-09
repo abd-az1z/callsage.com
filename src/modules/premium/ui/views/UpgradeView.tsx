@@ -9,20 +9,15 @@ import { PricingCard } from "../components/PricingCard";
 
 export const UpgradeView = () => {
   const trpc = useTRPC();
-  const { data: products, isLoading: productsLoading, error: productsError } = useSuspenseQuery(
+  
+  
+  const { data: products } = useSuspenseQuery(
     trpc.premium.getProducts.queryOptions()
   );
 
-  const { data: currentSubscription, isLoading: subLoading, error: subError } = useSuspenseQuery(
+  const { data: currentSubscription} = useSuspenseQuery(
     trpc.premium.getCurrentSubscription.queryOptions()
   );
-
-  if (productsLoading || subLoading) {
-    return <LoadingState title="Loading..." description="This may take few seconds" />;
-  }
-  if (productsError || subError) {
-    return <ErrorState title="Error..." description="Please try again later" />;
-  }
 
   return (
     <div className="flex-1 p-4 md:px-8 flex flex-col gap-y-10  ">
@@ -69,7 +64,7 @@ export const UpgradeView = () => {
               description={product.description}
               priceSuffix={`/${product.prices[0].recurringInterval}`}
               features={product.benefits.map((benefit) => benefit.description)}
-              badge={product.metadata.badge}
+              badge={product.metadata.badge as string |null}
             />
           );
         })}

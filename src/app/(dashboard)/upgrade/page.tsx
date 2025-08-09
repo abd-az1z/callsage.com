@@ -18,21 +18,22 @@ const Page = async () => {
   if (!session) {
     redirect("/sign-in");
   }
+
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
     trpc.premium.getCurrentSubscription.queryOptions()
   );
+
   void queryClient.prefetchQuery(trpc.premium.getProducts.queryOptions());
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<UpgradeViewLoading />}>
         <ErrorBoundary fallback={<UpgradeViewError />}>
-          {/* Render your upgrade UI here */}
           <UpgradeView />
         </ErrorBoundary>
       </Suspense>
     </HydrationBoundary>
   );
 };
-
 export default Page;
