@@ -20,7 +20,7 @@ import { MeetingGetOne } from "../../types";
 import { useState } from "react";
 import { CommandSelect } from "@/components/commandSelect";
 import { GeneratedAvatar } from "@/components/generated-avatar";
-import { NewAgentDailog } from "@/modules/agents/ui/components/newAgentDailog";
+import { NewAgentDialog } from "@/modules/agents/ui/components/NewAgentDialog";
 import { useRouter } from "next/navigation";
 
 interface MeetingFormProps {
@@ -109,7 +109,7 @@ export const MeetingForm = ({
 
   return (
     <>
-      <NewAgentDailog
+      <NewAgentDialog
         open={openNewAgentDailog}
         onOpenChange={setOpenNewAgentDailog}
       />
