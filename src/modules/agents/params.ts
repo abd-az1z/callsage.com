@@ -8,4 +8,4 @@ export const filtersSearchParams = {
     .withOptions({ clearOnDefault: true }),
 };
 
-export const loadSeachParams = createLoader(filtersSearchParams);
+export const loadSearchParams = createLoader(filtersSearchParams);

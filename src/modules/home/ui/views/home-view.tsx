@@ -49,7 +49,7 @@ export const HomeView = () => {
             </div>
 
             {/* Centered logo with gradient background, always visible */}
-            <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-xl py-6 sm:py-10 overflow-hidden rounded-2xl border bg-card shadow-sm flex items-center justify-center bg-radial from-sidebar-accent to-sidebar">
+            <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-xl py-6 sm:py-10 overflow-hidden rounded-2xl border bg-card shadow-sm flex items-center justify-center bg-gradient-to-br from-sidebar-accent/20 to-sidebar/20">
               <Image
                 src="/logo.svg"
                 alt="CallSage logo"

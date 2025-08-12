@@ -51,13 +51,13 @@ export const Transcript = ({ meetingId }: Props) => {
                       src={
                         item.user.image ??
                         generateAvatarUri({
-                          seed: item.user.name,
+                          seed: item.user.name || 'unknown',
                           variant: "initials",
                         })
                       }
                     />
                   </Avatar>
-                  <p className="text-sm font-medium"> {item.user.name} </p>
+                  <p className="text-sm font-medium"> {item.user.name || 'unknown'} </p>
                   <p className="text-sm text-blue-500 font-medium">
                     {format(new Date(0, 0, 0, 0, 0, 0, item.start_ts), "mm:ss")}{" "}
                   </p>
