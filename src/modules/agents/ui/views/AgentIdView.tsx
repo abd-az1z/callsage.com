@@ -78,7 +78,7 @@ export const AgentIdView = ({ agentId }: Props) => {
           <div className="p-4 gap-y-5 flex flex-col col-span-5 ">
             <div className="flex items-center gap-x-3">
               <GeneratedAvatar
-                variant="bottsNeutral"
+                variant="botttsNeutral"
                 seed={data.name}
                 className="size-9"
               />
