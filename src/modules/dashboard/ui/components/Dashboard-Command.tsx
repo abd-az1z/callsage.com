@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/command";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 // Define types for our data since we can't import from @/trpc/shared
 type Meeting = {
   id: string;
@@ -41,19 +40,17 @@ export const DashboardCommand = ({ open, setOpen }: Props) => {
   const [search, setSearch] = useState("");
   const trpc = useTRPC();
 
-  const { data: meetingsData } = useQuery<ApiResponse<Meeting>>(
-    trpc.meetings.getMany.queryOptions({
-      search,
-      pageSize: 100,
-    }) as any // Type assertion needed due to TRPC typing complexity
-  );
+  // @ts-expect-error - TRPC types are not properly inferred
+  const meetingsData = trpc.meetings.getMany.useQuery(
+    { search, pageSize: 100 },
+    { enabled: open }
+  ).data as ApiResponse<Meeting> | undefined;
 
-  const { data: agentsData } = useQuery<ApiResponse<Agent>>(
-    trpc.agents.getMany.queryOptions({
-      search,
-      pageSize: 100,
-    }) as any // Type assertion needed due to TRPC typing complexity
-  );
+  // @ts-expect-error - TRPC types are not properly inferred
+  const agentsData = trpc.agents.getMany.useQuery(
+    { search, pageSize: 100 },
+    { enabled: open }
+  ).data as ApiResponse<Agent> | undefined;
 
   const meetings = meetingsData?.items || [];
   const agents = agentsData?.items || [];
