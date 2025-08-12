@@ -5,13 +5,17 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-type CallRouteParams = { params: { meetingId: string } };
+interface PageProps {
+  params: { meetingId: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
-export default async function Page({ params }: CallRouteParams) {
+export default async function Page({ params }: PageProps) {
   const { meetingId } = params;
 
+  const headersList = headers();
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: new Headers(headersList as unknown as HeadersInit),
   });
 
   if (!session) {
