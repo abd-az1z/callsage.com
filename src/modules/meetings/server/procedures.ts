@@ -104,8 +104,8 @@ export const meetingsRouter = createTRPCRouter({
         return {
           ...item,
           user: {
-            name: speaker.name,
-            image: speaker.image,
+            name: speaker?.name,
+            image: speaker?.image,
           },
         };
       });
@@ -280,13 +280,15 @@ export const meetingsRouter = createTRPCRouter({
             MeetingStatus.Active,
             MeetingStatus.Completed,
             MeetingStatus.Processing,
-            MeetingStatus.Cancalled,
-          ])
+            MeetingStatus.Cancelled,
+          ] as const)
           .nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { search, page, pageSize, agentId, status } = input;
+      const { search, page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE, agentId, status } = input;
+      const pageNumber = Number(page) || DEFAULT_PAGE;
+      const pageSizeNumber = Number(pageSize) || DEFAULT_PAGE_SIZE;
 
       const data = await db
         .select({
@@ -307,8 +309,8 @@ export const meetingsRouter = createTRPCRouter({
           )
         )
         .orderBy(desc(meetings.createdAt), desc(meetings.id))
-        .limit(pageSize)
-        .offset((page - 1) * pageSize);
+        .limit(pageSizeNumber)
+        .offset((pageNumber - 1) * pageSizeNumber);
 
       const [total] = await db
         .select({ count: count() })
@@ -317,13 +319,13 @@ export const meetingsRouter = createTRPCRouter({
         .where(
           and(
             eq(meetings.userId, ctx.auth.session.userId),
-            search ? ilike(meetings.name, `%$(search)%`) : undefined,
-            status ? eq(meetings.status, status) : undefined,
+            search ? ilike(meetings.name, `%${search}%`) : undefined,
+            status ? eq(meetings.status, status as 'upcoming' | 'active' | 'completed' | 'processing' | 'cancelled') : undefined,
             agentId ? eq(meetings.agentId, agentId) : undefined
           )
         );
 
-      const totalPages = Math.ceil(total.count / pageSize);
+      const totalPages = Math.ceil(Number(total.count) / pageSizeNumber);
 
       return {
         items: data,
