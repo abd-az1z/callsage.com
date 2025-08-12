@@ -6,35 +6,59 @@ import { columns } from "../components/columns";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { EmptyState } from "@/components/emptyState";
-import { useAgentsFilters } from "../../hooks/useAgentsFilters";
 import { DataPagination } from "../components/DataPagination";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/data-table";
+import { DEFAULT_PAGE } from "@/constants";
 
-export const AgentsView = () => {
-  const [filters, setFilters] = useAgentsFilters();
+interface AgentsViewProps {
+  initialPage?: number;
+  initialSearch?: string;
+}
+
+export const AgentsView = ({ initialPage = DEFAULT_PAGE, initialSearch = '' }: AgentsViewProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get the current page and search from URL params or use initial values
+  const page = searchParams?.get('page') ? parseInt(searchParams.get('page') as string) : initialPage;
+  const search = searchParams?.get('search') || initialSearch;
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
+  const { data, error } = useSuspenseQuery(
     trpc.agents.getMany.queryOptions({
-      ...filters,
+      page,
+      search,
     })
   );
 
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    params.set('page', newPage.toString());
+    router.push(`?${params.toString()}`);
+  };
+
+  // Handle error state
+  if (error) {
+    return <AgentsViewError />;
+  }
+
   return (
-    <div className="flex-1 p-4 md:px-8 flex flex-col gap-y-4 ">
+    <div className="flex-1 p-4 md:px-8 flex flex-col gap-y-4">
       <DataTable
-        data={data.items}
+        data={data?.items || []}
         columns={columns}
         onRowClick={(row) => router.push(`/agents/${row.id}`)}
       />
-      <DataPagination
-        page={filters.page}
-        totalPages={data.totalPages}
-        onPageChange={(page) => setFilters({ page })}
-      />
-      {data.items.length === 0 && (
+      {data && data.totalPages > 0 && (
+        <DataPagination
+          page={page}
+          totalPages={data.totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+      {!data?.items?.length && (
         <EmptyState
           title="Create your first agent"
           description="Create an agent to join meetings. Each agent will follow your instructions and can interact with participants during the call. "
