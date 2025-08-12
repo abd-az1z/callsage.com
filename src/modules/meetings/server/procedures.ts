@@ -101,6 +101,18 @@ export const meetingsRouter = createTRPCRouter({
         const speaker = speakers.find(
           (speaker) => speaker.id === item.speaker_id
         );
+        
+        // Handle case where speaker is not found
+        if (!speaker) {
+          return {
+            ...item,
+            user: {
+              name: 'Unknown Speaker',
+              image: generateAvatarUri({ seed: 'unknown', variant: 'initials' }),
+            },
+          };
+        }
+
         return {
           ...item,
           user: {
