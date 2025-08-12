@@ -28,7 +28,7 @@ export const AgentIdFilter = () => {
           children: (
             <div className="capitalize flex items-center gap-x-2">
               <GeneratedAvatar
-                variant="bottsNeutral"
+                variant="botttsNeutral"
                 seed={agent.name}
                 className="size-4"
               />

@@ -50,7 +50,7 @@ export const columns: ColumnDef<MeetingGetMany[number]>[] = [
             </span>
           </div>
           <GeneratedAvatar
-            variant="bottsNeutral"
+            variant="botttsNeutral"
             seed={row.original.agent.name}
             className="size-4"
           />

@@ -246,7 +246,7 @@ export async function POST(req: NextRequest) {
 
       const avatarUrl = generateAvatarUri({
         seed: existingAgent.name,
-        variant: "bottsNeutral",
+        variant: "botttsNeutral",
       });
 
       streamChat.upsertUser({
