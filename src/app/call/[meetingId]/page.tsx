@@ -5,13 +5,20 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-interface PageProps {
-  params: { meetingId: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
+// interface PageProps {
+//   params: { meetingId: string };
+//   searchParams?: { [key: string]: string | string[] | undefined };
+// }
 
-export default async function Page({ params }: PageProps) {
-  const { meetingId } = params;
+// export default async function Page({ params }: PageProps) {
+  type RouteParams = { meetingId: string };
+
+  export default async function Page({
+    params,
+  }: {
+    params: Promise<RouteParams>;
+  }) {
+  const { meetingId } = await params;
 
   const headersList = headers();
   const session = await auth.api.getSession({
