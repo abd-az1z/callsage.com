@@ -1,4 +1,4 @@
-import { GeneratedAvatar } from "@/components/generated-avatar";
+import NextDynamic from "next/dynamic";
 import {
   CommandResponsiveDialog,
   CommandInput,
@@ -8,7 +8,7 @@ import {
   CommandEmpty,
   // CommandDialog
 } from "@/components/ui/command";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 // Define types for our data since we can't import from @/trpc/shared
 type Meeting = {
@@ -27,8 +27,14 @@ type ApiResponse<T> = {
   items: T[];
   // Add pagination properties if needed
 };
+import { useQuery } from "@tanstack/react-query";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@/trpc/routers/_app";
 
-import { useTRPC } from "@/trpc/client";
+const GeneratedAvatar = NextDynamic(
+  () => import("@/components/generated-avatar").then((m) => m.GeneratedAvatar),
+  { ssr: false }
+);
 
 interface Props {
   open: boolean;
@@ -38,19 +44,30 @@ interface Props {
 export const DashboardCommand = ({ open, setOpen }: Props) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const trpc = useTRPC();
+  // Local tRPC client instance for client-only querying
+  const trpcClient = useMemo(
+    () =>
+      createTRPCClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: "/api/trpc",
+          }),
+        ],
+      }),
+    []
+  );
 
-  // @ts-expect-error - TRPC types are not properly inferred
-  const meetingsData = trpc.meetings.getMany.useQuery(
-    { search, pageSize: 100 },
-    { enabled: open }
-  ).data as ApiResponse<Meeting> | undefined;
+  const { data: meetingsData } = useQuery<ApiResponse<Meeting>>({
+    queryKey: ["cmd", "meetings", search],
+    queryFn: () => trpcClient.meetings.getMany.query({ search, pageSize: 100 }),
+    enabled: open,
+  });
 
-  // @ts-expect-error - TRPC types are not properly inferred
-  const agentsData = trpc.agents.getMany.useQuery(
-    { search, pageSize: 100 },
-    { enabled: open }
-  ).data as ApiResponse<Agent> | undefined;
+  const { data: agentsData } = useQuery<ApiResponse<Agent>>({
+    queryKey: ["cmd", "agents", search],
+    queryFn: () => trpcClient.agents.getMany.query({ search, pageSize: 100 }),
+    enabled: open,
+  });
 
   const meetings = meetingsData?.items || [];
   const agents = agentsData?.items || [];
