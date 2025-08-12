@@ -52,12 +52,12 @@ const options = [
     ),
   },
   {
-    id: MeetingStatus.Cancalled,
-    value: MeetingStatus.Cancalled,
+    id: MeetingStatus.Cancelled,
+    value: MeetingStatus.Cancelled,
     children: (
       <div className="capitalize flex items-center gap-x-2">
         <CircleXIcon className="size-3 text-muted-foreground " />
-        {MeetingStatus.Cancalled}
+        {MeetingStatus.Cancelled}
       </div>
     ),
   },
