@@ -41,19 +41,21 @@ export const DashboardCommand = ({ open, setOpen }: Props) => {
   const [search, setSearch] = useState("");
   const trpc = useTRPC();
 
-  const { data: meetingsData } = useQuery<ApiResponse<Meeting>>(
-    trpc.meetings.getMany.queryOptions({
+  const { data: meetingsData } = useQuery({
+    ...trpc.meetings.getMany.queryOptions({
       search,
       pageSize: 100,
-    }) as any // Type assertion needed due to TRPC typing complexity
-  );
+    }),
+    select: (data: unknown) => data as ApiResponse<Meeting>
+  });
 
-  const { data: agentsData } = useQuery<ApiResponse<Agent>>(
-    trpc.agents.getMany.queryOptions({
+  const { data: agentsData } = useQuery({
+    ...trpc.agents.getMany.queryOptions({
       search,
       pageSize: 100,
-    }) as any // Type assertion needed due to TRPC typing complexity
-  );
+    }),
+    select: (data: unknown) => data as ApiResponse<Agent>
+  });
 
   const meetings = meetingsData?.items || [];
   const agents = agentsData?.items || [];
