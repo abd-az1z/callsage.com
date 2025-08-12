@@ -1,7 +1,7 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { GeneratedAvatar } from "@/components/generated-avatar";
+import NextDynamic from "next/dynamic";
 import { ChevronDownIcon, CreditCardIcon, LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +20,11 @@ import {
   DrawerHeader,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+
+const GeneratedAvatar = NextDynamic(
+  () => import("@/components/generated-avatar").then(m => m.GeneratedAvatar),
+  { ssr: false }
+);
 
 export const DashboardUserBotton = () => {
   const { data, isPending } = authClient.useSession();
