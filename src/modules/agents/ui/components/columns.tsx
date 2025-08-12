@@ -1,10 +1,14 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { GeneratedAvatar } from "@/components/generated-avatar";
+import dynamic from "next/dynamic";
 import { CornerDownRight, VideoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AgentsGetMany } from "../../types";
+
+const GeneratedAvatar = dynamic(() => import("@/components/generated-avatar").then(m => m.GeneratedAvatar), {
+  ssr: false,
+});
 
 export const columns: ColumnDef<AgentsGetMany[number]>[] = [
   {
