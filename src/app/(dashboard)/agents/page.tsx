@@ -12,14 +12,14 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SearchParams } from "nuqs";
-import { loadSeachParams } from "@/modules/agents/params";
+import { loadSearchParams } from "@/modules/agents/params";
 
 interface Props {
   searchParams: Promise<SearchParams>;
 }
 
 const Agents = async ({searchParams}:Props) => {
-  const filters  = await loadSeachParams(searchParams)
+  const filters  = await loadSearchParams(searchParams)
   const session = await auth.api.getSession({
     headers: await headers(),
   });
