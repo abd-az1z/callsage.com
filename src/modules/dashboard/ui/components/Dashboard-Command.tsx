@@ -5,11 +5,29 @@ import {
   CommandItem,
   CommandList,
   CommandGroup,
-  CommandEmpty
+  CommandEmpty,
+  CommandDialog
 } from "@/components/ui/command";
-import { Dispatch, useState, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+// Define types for our data since we can't import from @/trpc/shared
+type Meeting = {
+  id: string;
+  name: string;
+  // Add other meeting properties as needed
+};
+
+type Agent = {
+  id: string;
+  name: string;
+  // Add other agent properties as needed
+};
+
+type ApiResponse<T> = {
+  items: T[];
+  // Add pagination properties if needed
+};
 
 import { useTRPC } from "@/trpc/client";
 
@@ -21,22 +39,24 @@ interface Props {
 export const DashboardCommand = ({ open, setOpen }: Props) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
-
   const trpc = useTRPC();
 
-  const meetings = useQuery(
+  const { data: meetingsData } = useQuery<ApiResponse<Meeting>>(
     trpc.meetings.getMany.queryOptions({
       search,
       pageSize: 100,
-    })
+    }) as any // Type assertion needed due to TRPC typing complexity
   );
 
-  const agents = useQuery(
+  const { data: agentsData } = useQuery<ApiResponse<Agent>>(
     trpc.agents.getMany.queryOptions({
       search,
       pageSize: 100,
-    })
+    }) as any // Type assertion needed due to TRPC typing complexity
   );
+
+  const meetings = meetingsData?.items || [];
+  const agents = agentsData?.items || [];
 
   return (
     <CommandResponsiveDialog
@@ -46,7 +66,7 @@ export const DashboardCommand = ({ open, setOpen }: Props) => {
     >
       <CommandInput
         value={search}
-        onValueChange={(value) => setSearch(value)}
+        onValueChange={(value: string) => setSearch(value)}
         placeholder="Search for a meeting or agent..."
       />
       <CommandList>
@@ -56,7 +76,7 @@ export const DashboardCommand = ({ open, setOpen }: Props) => {
               No meetings found
             </span>{" "}
           </CommandEmpty>
-          {meetings.data?.items.map((meeting) => (
+          {meetings.map((meeting: Meeting) => (
             <CommandItem
               onSelect={() => {
                 router.push(`/meetings/${meeting.id}`);
@@ -73,9 +93,9 @@ export const DashboardCommand = ({ open, setOpen }: Props) => {
           <CommandEmpty>
             <span className="text-muted-foreground text-sm">
               No agents found
-            </span>{" "}
+            </span>
           </CommandEmpty>
-          {agents.data?.items.map((agent) => (
+          {agents.map((agent: Agent) => (
             <CommandItem
               onSelect={() => {
                 router.push(`/agents/${agent.id}`)
