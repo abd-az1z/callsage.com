@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://callsage-com-8m9w.vercel.app/"><strong>Live Demo →</strong></a> &nbsp;·&nbsp;
+  <a href="https://callsage-com-8m9w.vercel.app/" target="_blank"><strong>🚀 Live Demo →</strong></a> &nbsp;·&nbsp;
   <a href="#getting-started">Run Locally</a> &nbsp;·&nbsp;
   <a href="#architecture">Architecture</a>
 </p>
