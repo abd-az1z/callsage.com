@@ -20,9 +20,9 @@ import { redirect } from "next/navigation";
   }) {
   const { meetingId } = await params;
 
-  const headersList = headers();
+  const headersList = await headers();
   const session = await auth.api.getSession({
-    headers: new Headers(headersList as unknown as HeadersInit),
+    headers: headersList,
   });
 
   if (!session) {
