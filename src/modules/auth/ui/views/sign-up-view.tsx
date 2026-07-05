@@ -61,6 +61,7 @@ export const SignUpView = () => {
           router.push("/");
         },
         onError: ({ error }) => {
+          setPending(false);
           setError(error.message);
         },
       }
@@ -81,6 +82,7 @@ export const SignUpView = () => {
           setPending(false);
         },
         onError: ({ error }) => {
+          setPending(false);
           setError(error.message);
         },
       }

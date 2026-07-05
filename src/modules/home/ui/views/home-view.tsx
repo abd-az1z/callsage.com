@@ -12,6 +12,20 @@ import {
 } from "lucide-react";
 
 export const HomeView = () => {
+  // const router = useRouter();
+  // const { data, isPending } = authClient.useSession();
+
+  // const handleProtectedNavigation = (path: string) => {
+  //   if (isPending) return;
+
+  //   if (!data?.user) {
+  //     router.push("/sign-in");
+  //     return;
+  //   }
+
+  //   router.push(path);
+  // };
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero */}
@@ -34,11 +48,20 @@ export const HomeView = () => {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <Link href="/agents">Start your first meeting</Link>
+                <Button
+                  size="lg"
+                  // disabled={isPending}
+                  // onClick={() => handleProtectedNavigation("/agents")}
+                >
+                  Start your first meeting
                 </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link href="/upgrade">View pricing</Link>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  // disabled={isPending}
+                  // onClick={() => handleProtectedNavigation("/agents")}
+                >
+                  Try it now
                 </Button>
                 <Button asChild variant="ghost" size="lg">
                   <Link href="https://github.com/abd-az1z/callsage.com">
@@ -136,8 +159,13 @@ export const HomeView = () => {
               <Button asChild size="lg">
                 <Link href="/upgrade">See plans</Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/agents">Try it now</Link>
+              <Button
+                variant="outline"
+                size="lg"
+                // disabled={isPending}
+                // onClick={() => handleProtectedNavigation("/agents")}
+              >
+                Try it now
               </Button>
             </div>
           </div>

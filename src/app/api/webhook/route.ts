@@ -1,17 +1,16 @@
 import OpenAI from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 import { inngest } from "@/ingest/client";
 import { streamVideo } from "@/lib/stream-video";
-import {
+import type {
   CallEndedEvent,
   CallRecordingReadyEvent,
   CallSessionStartedEvent,
   CallTranscriptionReadyEvent,
   MessageNewEvent,
 } from "@stream-io/node-sdk";
-import { CallSessionParticipantLeftEvent } from "@stream-io/video-react-sdk";
 import { eq, not, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { streamChat } from "@/lib/stream-chat";
@@ -105,11 +104,11 @@ export async function POST(req: NextRequest) {
       instructions: existingAgent.instructions,
     });
   } else if (eventType === "call.session_participant_left") {
-    const event = payload as CallSessionParticipantLeftEvent;
+    const event = payload as { call_cid: string };
     const meetingId = event.call_cid.split(":")[1];
 
     if (!meetingId) {
-      throw NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
+      return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
     }
 
     const call = streamVideo.video.call("default", meetingId);
@@ -119,7 +118,7 @@ export async function POST(req: NextRequest) {
     const meetingId = event.call.custom?.meetingId;
 
     if (!meetingId) {
-      throw NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
+      return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
     }
 
     await db
@@ -142,7 +141,7 @@ export async function POST(req: NextRequest) {
       .returning();
 
     if (!updatedMeeting) {
-      throw NextResponse.json({ error: "Meeting not found" }, { status: 404 });
+      return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
     await inngest.send({
@@ -182,7 +181,7 @@ export async function POST(req: NextRequest) {
       .where(and(eq(meetings.id, channelId), eq(meetings.status, "completed")));
 
     if (!existingMeeting) {
-      throw NextResponse.json({ error: "Meeting not found" }, { status: 404 });
+      return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
     const [existingAgent] = await db
@@ -191,7 +190,7 @@ export async function POST(req: NextRequest) {
       .where(eq(agents.id, existingMeeting.agentId));
 
     if (!existingAgent) {
-      throw NextResponse.json({ error: "Agent not found" }, { status: 404 });
+      return NextResponse.json({ error: "Agent not found" }, { status: 404 });
     }
 
     if (userId !== existingAgent.id) {
@@ -249,19 +248,15 @@ export async function POST(req: NextRequest) {
         variant: "botttsNeutral",
       });
 
-      streamChat.upsertUser({
+      await streamChat.upsertUser({
         id: existingAgent.id,
         name: existingAgent.name,
         image: avatarUrl,
       });
 
-      channel.sendMessage({
+      await channel.sendMessage({
         text: GPTResponseText,
-        user: {
-          id: existingAgent.id,
-          name: existingAgent.name,
-          image: avatarUrl,
-        },
+        user_id: existingAgent.id,
       });
     }
   }

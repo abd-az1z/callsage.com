@@ -52,6 +52,7 @@ export const SignInView = () => {
           router.push("/");
         },
         onError: ({ error }) => {
+          setPending(false);
           setError(error.message);
         },
       }
@@ -80,6 +81,7 @@ export const SignInView = () => {
           setPending(false);
         },
         onError: ({ error }) => {
+          setPending(false);
           setError(error.message);
         },
       }
@@ -196,6 +198,8 @@ export const SignInView = () => {
             <Image
               src="/logo.svg"
               alt="image"
+              width={92}
+              height={92}
               className="h-[92px] w-[92px] "
             />
             <p className="text-2xl font-semibold text-white ">CallSage</p>

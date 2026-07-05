@@ -6,12 +6,9 @@ import { polarClient } from "@/lib/polar";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { MAX_FREE_AGENTS } from "@/modules/premium/constants";
+import { MAX_FREE_AGENTS, MAX_FREE_MEETINGS } from "@/modules/premium/constants";
 export const createTRPCContext = cache(async () => {
-  /**
-   * @see: https://trpc.io/docs/server/context
-   */
-  return { userId: "user_123" };
+  return {};
 });
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
@@ -40,9 +37,16 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 
 export const premiumProcedure = (entity: "meetings" | "agents") =>
   protectedProcedure.use(async ({ ctx, next }) => {
-    const customer = await polarClient.customers.getStateExternal({
-      externalId: ctx.auth.user.id,
-    });
+    let isPremium = false;
+
+    try {
+      const customer = await polarClient.customers.getStateExternal({
+        externalId: ctx.auth.user.id,
+      });
+      isPremium = customer.activeSubscriptions.length > 0;
+    } catch {
+      // Customer doesn't exist in Polar yet, continue with free usage check
+    }
 
     const [userMeetings] = await db
       .select({
@@ -58,9 +62,8 @@ export const premiumProcedure = (entity: "meetings" | "agents") =>
       .from(agents)
       .where(eq(agents.userId, ctx.auth.user.id));
 
-    const isPremium = customer.activeSubscriptions.length > 0;
     const isFreeAgentLimitReached = userAgents.count >= MAX_FREE_AGENTS;
-    const isFreeMeetingLimitReached = userMeetings.count >= MAX_FREE_AGENTS;
+    const isFreeMeetingLimitReached = userMeetings.count >= MAX_FREE_MEETINGS;
 
     const shouldThrowMeetingError =
       entity === "meetings" && isFreeMeetingLimitReached && !isPremium;
@@ -81,5 +84,5 @@ export const premiumProcedure = (entity: "meetings" | "agents") =>
       });
     }
 
-    return next({ ctx: { ...ctx, customer } });
+    return next({ ctx });
   });

@@ -119,7 +119,7 @@ export const agentsRouter = createTRPCRouter({
         .where(
           and(
             eq(agents.userId, ctx.auth.session.userId),
-            search ? ilike(agents.name, `%$(search)%`) : undefined
+            search ? ilike(agents.name, `%${search}%`) : undefined
           )
         );
 
